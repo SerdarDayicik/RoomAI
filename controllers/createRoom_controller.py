@@ -35,6 +35,13 @@ def create_room():
         if not device_id or not prompt or not image_file:
             return jsonify({"error": "Eksik bilgi! 'device_id', 'prompt' ve 'image' zorunludur."}), 400
 
+        print(device_id)
+        # Önce bu device_id ile kayıtlı kullanıcı var mı kontrol ediyoruz
+        existing_user = supabase.table('users').select("*").eq("device_id", device_id).execute()
+        
+        if not existing_user.data:
+            return jsonify({"error": "Bu cihaz ID'si sisteme kayıtlı değil. Lütfen önce kayıt olun."}), 403
+    
         # Kullanıcı resmini kaydediyoruz (benzersiz isimle)
         user_image_filename = f"{uuid.uuid4().hex}_user.png"
         user_image_path = os.path.join(UPLOAD_FOLDER, user_image_filename)
@@ -44,7 +51,7 @@ def create_room():
         image = PIL.Image.open(image_file)
 
         # Gemini API istemcisini başlatıyoruz
-        client = genai.Client(api_key=GOOGLE_API_KEY)
+        client = genai.Client(api_key=GOOGLE_API_KEY)   
 
         # Gemini API'ye istek gönderiyoruz
         response = client.models.generate_content(
@@ -83,8 +90,8 @@ def create_room():
                 if result.data:  # başarılı bir insert yanıtı
                     return jsonify({
                         "message": "Resim başarıyla oluşturuldu ve kaydedildi.",
-                        "generated_image": f"http://10.33.41.153:5000/model/get-image/{unique_filename}",
-                        "user_image": f"http://10.33.41.153:5000/model/get-image/{user_image_filename}"
+                        "generated_image": f"http://192.168.1.11:5000/model/get-image/{unique_filename}",
+                        "user_image": f"http://192.168.1.11:5000/model/get-image/{user_image_filename}"
                     }), 200
                 else:
                     return jsonify({"error": "Supabase veritabanına kayıt yapılırken bir hata oluştu.", "details": result}), 500

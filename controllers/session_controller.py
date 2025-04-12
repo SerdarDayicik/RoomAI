@@ -32,3 +32,26 @@ def register():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@session_bp.route('/get-premium-info', methods=['POST'])
+def get_premium_info():
+    data = request.get_json()
+    device_id = data.get("device_id")
+
+    if not device_id:
+        return jsonify({"error": "Eksik bilgiler! 'device_id' zorunludur."}), 400
+
+    try:
+        # device_id ile kullanıcıyı buluyoruz
+        user_info = supabase.table('users').select("is_premium").eq("device_id", device_id).execute()
+
+        if not user_info.data:
+            return jsonify({"error": "Kullanıcı bulunamadı!"}), 404
+
+        # is_premium bilgisini döndürüyoruz
+        return jsonify({"is_premium": user_info.data[0]["is_premium"]}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
