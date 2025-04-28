@@ -90,13 +90,8 @@ def create_room():
                 if result.data:  # başarılı bir insert yanıtı
                     return jsonify({
                         "message": "Resim başarıyla oluşturuldu ve kaydedildi.",
-<<<<<<< HEAD
-                        "generated_image": f"http://192.168.1.11:5000/model/get-image/{unique_filename}",
-                        "user_image": f"http://192.168.1.11:5000/model/get-image/{user_image_filename}"
-=======
-                        "generated_image": f"http://159.89.111.41:5001/model/get-image/{unique_filename}",
-                        "user_image": f"http://159.89.111.41:5001/model/get-image/{user_image_filename}"
->>>>>>> da621917d790ffae7ab159785322121b0a57ddf0
+                        "generated_image": f"http://159.203.91.24:5001/model/get-image/{unique_filename}",
+                        "user_image": f"http://159.203.91.24:5001/model/get-image/{user_image_filename}"
                     }), 200
                 else:
                     return jsonify({"error": "Supabase veritabanına kayıt yapılırken bir hata oluştu.", "details": result}), 500
